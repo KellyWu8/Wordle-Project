@@ -1,13 +1,12 @@
 package wordle;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Random;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class LetterBox extends JPanel {
     private JLabel letterBoxLabel;
+    private int colorVal = 0;
 
     LetterBox() {
         setPreferredSize(new Dimension(50, 50));
@@ -27,21 +26,33 @@ public class LetterBox extends JPanel {
     }
     
     void setColor(int val) {
-        Color color = null;
-        if (val == 0) { // Gray: letter not in word
-            color = new Color(105, 108, 110);
-        }
-        else if (val == 1) { // Yellow: letter in wrong position
-            color = new Color(200,182,83);
-        }
-        else if (val == 2) { // Green: letter in right position
-            color = new Color(108,169,101);
-        }
+        colorVal = val;
+        repaint();
+    }
+    
+    void setLetter(String letter) {
+        letterBoxLabel.setText(letter);
+        letterBoxLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        letterBoxLabel.setVerticalAlignment(SwingConstants.CENTER);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         
-        setBackground(color);
-        letterBoxLabel.setOpaque(true);
-        letterBoxLabel.setBackground(color);
-        letterBoxLabel.setBorder(null);
+        if (colorVal != 0) {
+            Color color = null;
+            if (colorVal == 1) { // Gray: letter not in word
+                color = new Color(105, 108, 110);
+            } else if (colorVal == 2) { // Yellow: letter in wrong position
+                color = new Color(200,182,83);
+            } else if (colorVal == 3) { // Green: letter in right position
+                color = new Color(108,169,101);
+            }
+
+            // Paint the background with the set color
+            g.setColor(color);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
     }
 }
-

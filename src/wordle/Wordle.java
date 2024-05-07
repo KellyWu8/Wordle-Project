@@ -1,9 +1,9 @@
 package wordle;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Random;
 import javax.swing.*;
+import java.awt.event.*;
+import java.util.*;
 
 public class Wordle extends JFrame {
     
@@ -18,6 +18,7 @@ public class Wordle extends JFrame {
         frame.setSize(600, 900);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
+        
         
         // Have a panel that contains all the elements
         JPanel background = new JPanel();
@@ -60,42 +61,42 @@ public class Wordle extends JFrame {
         // Top row keys
         JPanel topRowKeysPanel = new JPanel();
         topRowKeysPanel.setOpaque(false);
-        topRowKeysPanel.add(createLetterKey("Q"));
-        topRowKeysPanel.add(createLetterKey("W"));
-        topRowKeysPanel.add(createLetterKey("E"));
-        topRowKeysPanel.add(createLetterKey("R"));
-        topRowKeysPanel.add(createLetterKey("T"));
-        topRowKeysPanel.add(createLetterKey("Y"));
-        topRowKeysPanel.add(createLetterKey("U"));
-        topRowKeysPanel.add(createLetterKey("I"));
-        topRowKeysPanel.add(createLetterKey("O"));
-        topRowKeysPanel.add(createLetterKey("P"));
+        topRowKeysPanel.add(createKey("Q", true).getKeyButton());
+        topRowKeysPanel.add(createKey("W", true).getKeyButton());
+        topRowKeysPanel.add(createKey("E", true).getKeyButton());
+        topRowKeysPanel.add(createKey("R", true).getKeyButton());
+        topRowKeysPanel.add(createKey("T", true).getKeyButton());
+        topRowKeysPanel.add(createKey("Y", true).getKeyButton());
+        topRowKeysPanel.add(createKey("U", true).getKeyButton());
+        topRowKeysPanel.add(createKey("I", true).getKeyButton());
+        topRowKeysPanel.add(createKey("O", true).getKeyButton());
+        topRowKeysPanel.add(createKey("P", true).getKeyButton());
         
         // Middle row keys
         JPanel middleRowKeysPanel = new JPanel();
         middleRowKeysPanel.setOpaque(false);
-        middleRowKeysPanel.add(createLetterKey("A"));
-        middleRowKeysPanel.add(createLetterKey("S"));
-        middleRowKeysPanel.add(createLetterKey("D"));
-        middleRowKeysPanel.add(createLetterKey("F"));
-        middleRowKeysPanel.add(createLetterKey("G"));
-        middleRowKeysPanel.add(createLetterKey("H"));
-        middleRowKeysPanel.add(createLetterKey("J"));
-        middleRowKeysPanel.add(createLetterKey("K"));
-        middleRowKeysPanel.add(createLetterKey("L"));
+        middleRowKeysPanel.add(createKey("A", true).getKeyButton());
+        middleRowKeysPanel.add(createKey("S", true).getKeyButton());
+        middleRowKeysPanel.add(createKey("D", true).getKeyButton());
+        middleRowKeysPanel.add(createKey("F", true).getKeyButton());
+        middleRowKeysPanel.add(createKey("G", true).getKeyButton());
+        middleRowKeysPanel.add(createKey("H", true).getKeyButton());
+        middleRowKeysPanel.add(createKey("J", true).getKeyButton());
+        middleRowKeysPanel.add(createKey("K", true).getKeyButton());
+        middleRowKeysPanel.add(createKey("L", true).getKeyButton());
         
         // Bottom row keys
         JPanel bottomRowKeysPanel = new JPanel();
         bottomRowKeysPanel.setOpaque(false);
-        bottomRowKeysPanel.add(createSpecialKey("ENTER"));
-        bottomRowKeysPanel.add(createLetterKey("Z"));
-        bottomRowKeysPanel.add(createLetterKey("X"));
-        bottomRowKeysPanel.add(createLetterKey("C"));
-        bottomRowKeysPanel.add(createLetterKey("V"));
-        bottomRowKeysPanel.add(createLetterKey("B"));
-        bottomRowKeysPanel.add(createLetterKey("N"));
-        bottomRowKeysPanel.add(createLetterKey("M"));
-        bottomRowKeysPanel.add(createSpecialKey("BACK"));
+        bottomRowKeysPanel.add(createKey("ENTER", false).getKeyButton());
+        bottomRowKeysPanel.add(createKey("Z", true).getKeyButton());
+        bottomRowKeysPanel.add(createKey("X", true).getKeyButton());
+        bottomRowKeysPanel.add(createKey("C", true).getKeyButton());
+        bottomRowKeysPanel.add(createKey("V", true).getKeyButton());
+        bottomRowKeysPanel.add(createKey("B", true).getKeyButton());
+        bottomRowKeysPanel.add(createKey("N", true).getKeyButton());
+        bottomRowKeysPanel.add(createKey("M", true).getKeyButton());
+        bottomRowKeysPanel.add(createKey("BACK", false).getKeyButton());
 
         keyboardPanel.add(topRowKeysPanel);
         keyboardPanel.add(middleRowKeysPanel);
@@ -108,30 +109,49 @@ public class Wordle extends JFrame {
         frame.add(background);
         frame.setVisible(true);
     }
-    
-    static JButton createLetterKey(String letter) {
-        JButton b = new JButton(letter);
-        b.setPreferredSize(new Dimension(40, 50));
-        b.setMargin(new Insets(5, 5, 5, 5));
-        b.setFont(new Font("Sanserif", Font.BOLD, 18));
-        b.setBackground(new Color(217,218,219));
-        b.setBorderPainted(false);
-        return b;
-    }
-    
-    static JButton createSpecialKey(String letter) {
-        JButton b = new JButton(letter);
-        b.setPreferredSize(new Dimension(60, 50));
-        b.setMargin(new Insets(5, 5, 5, 5));
-        b.setFont(new Font("Sanserif", Font.BOLD, 12));
-        b.setBackground(new Color(217,218,219));
-        b.setBorderPainted(false);
-        return b;
-    }
-    
+
     static JPanel createRowPanel() {
         JPanel rp = new JPanel();
         rp.setOpaque(false);
         return rp;
+    }
+    
+    static Key createKey(String text, Boolean isLetter) {
+        Key key = new Key(text, isLetter);
+        key.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (isLetter) {
+                    if (currRow < 6 && currPos != 5) {
+                        // Update the current letter box with the letter
+                        String letter = text;
+                        letterBoxesArray[currRow][currPos].setLetter(letter);
+                        // Move to the next position
+                        currPos++;
+                        
+                        System.out.println("letter key pressed");
+                    }
+                }
+                else if (text.equals("BACK")) {
+                    if (currPos > 0) {
+                         // Clear letterBox and move back one position
+                        currPos--;
+                        letterBoxesArray[currRow][currPos].setLetter("");
+                        
+                        System.out.println("back key pressed");
+                    }
+                }
+                else if (text.equals("ENTER")) {
+                    if (currRow < 6 && currPos == 5) {
+                        // Reset to new row
+                        currRow++;
+                        currPos = 0;
+                        
+                        System.out.println("enter key pressed");
+                    }
+                }
+            }
+        });
+        return key;
     }
 }
