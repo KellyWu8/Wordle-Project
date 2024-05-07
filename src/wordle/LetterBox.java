@@ -27,6 +27,7 @@ public class LetterBox extends JPanel {
     
     void setColor(int val) {
         colorVal = val;
+        letterBoxLabel.setForeground(Color.WHITE);
         repaint();
     }
     
@@ -35,11 +36,15 @@ public class LetterBox extends JPanel {
         letterBoxLabel.setHorizontalAlignment(SwingConstants.CENTER);
         letterBoxLabel.setVerticalAlignment(SwingConstants.CENTER);
     }
+    
+    String getLetter() {
+        return letterBoxLabel.getText();
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
+
         if (colorVal != 0) {
             Color color = null;
             if (colorVal == 1) { // Gray: letter not in word
