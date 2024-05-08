@@ -3,6 +3,9 @@ package wordle;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class StartGUI extends JFrame {
     JFrame startFrame = null;
@@ -11,9 +14,13 @@ public class StartGUI extends JFrame {
     int currRow = 0; // First row
     int numCorrect = 0;
     String targetWord = null;
+    String username = null;
+    LocalDateTime currTime = null;
 
-    StartGUI(String word) {
+    StartGUI(String word, String newUsername, LocalDateTime newTime) {
         targetWord = word;
+        username = newUsername;
+        currTime = newTime;
         
         // Set up our frame for the window
         startFrame = new JFrame("Wordle by Kelly Wu");
@@ -129,8 +136,6 @@ public class StartGUI extends JFrame {
                         letterBoxesArray[currRow][currPos].setLetter(letter);
                         // Move to the next position
                         currPos++;
-                        
-                        System.out.println("letter key pressed");
                     }
                 }
                 else if (text.equals("BACK")) {
@@ -138,8 +143,6 @@ public class StartGUI extends JFrame {
                          // Clear letterBox and move back one position
                         currPos--;
                         letterBoxesArray[currRow][currPos].setLetter("");
-                        
-                        System.out.println("back key pressed");
                     }
                 }
                 else if (text.equals("ENTER")) {
@@ -160,7 +163,6 @@ public class StartGUI extends JFrame {
                         }
                         
                         if (numCorrect == 5) {
-                            System.out.println("YOU WINNN");
                             new EndGUI(currRow, targetWord);
                         }
                         else {
@@ -170,12 +172,9 @@ public class StartGUI extends JFrame {
                             numCorrect = 0;
 
                             if (currRow == 6) {
-                                System.out.println("YOU LOSEEE");
                                 new EndGUI(currRow, targetWord);
                             }
                         }
-                        
-                        System.out.println("enter key pressed");
                     }
                 }
             }
@@ -189,13 +188,17 @@ public class StartGUI extends JFrame {
         String detail = null;
 
         EndGUI(int rowNum, String word) {
+            int score = rowNum + 1;
+            
+            // ====================== Create End Window ====================== //
             if (rowNum < 6) {
                 title = "Congratulations!";
                 if ((rowNum + 1) == 1) {
-                    detail = "You guessed within " + (rowNum + 1) + " try.";
+                    detail = "You guessed within " + score + " try.";
+                    
                 }
                 else {
-                    detail = "You guessed within " + (rowNum + 1) + " tries!";
+                    detail = "You guessed within " + score + " tries!";
                 }
             } else {
                 title = "Out of Tries!";
@@ -224,15 +227,12 @@ public class StartGUI extends JFrame {
             detailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             // Create Play Again button
-            JButton paButton = new JButton("PLAY AGAIN");
+            JButton paButton = new JButton("Play Again");
             paButton.setAlignmentX(Component.CENTER_ALIGNMENT);
             paButton.setBackground(Color.BLACK);
             paButton.setForeground(Color.WHITE);
             paButton.setFont(new Font("Arial", Font.BOLD, 16));
-
             paButton.setPreferredSize(new Dimension(120, 40));
-
-            // Add padding to the button text
             paButton.setMargin(new Insets(10, 20, 10, 20));
             
             paButton.addActionListener(new ActionListener() {
@@ -249,6 +249,24 @@ public class StartGUI extends JFrame {
 
             endFrame.add(background);
             endFrame.setVisible(true);
+            // ====================== Log User's Stats ====================== //
+            if (rowNum < 6) {
+                Connection conn = null;
+                String url = "jdbc:mariadb://127.0.0.1/cs3913";
+                String dbUser = "cs3913";
+                String dbPassword = "abc123";
+                try {
+                    conn = DriverManager.getConnection(url, dbUser, dbPassword);
+                    String time = currTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); // login time
+                    String query = "INSERT INTO STATS (time, username, score) VALUES ('" + time + "', '" + username + "', '" + score + "')";
+
+                    // Insert user's stats into the database
+                    Statement s = conn.createStatement();
+                    s.execute(query);
+                } catch (SQLException ex) {
+                    System.out.println("Exception: " + ex.toString());
+                }
+            }
         }
     }
 }
