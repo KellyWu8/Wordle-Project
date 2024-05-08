@@ -17,10 +17,9 @@ public class StartGUI extends JFrame {
     String username = null;
     LocalDateTime currTime = null;
 
-    StartGUI(String word, String newUsername, LocalDateTime newTime) {
+    StartGUI(String word, String newUsername) {
         targetWord = word;
         username = newUsername;
-        currTime = newTime;
         
         // Set up our frame for the window
         startFrame = new JFrame("Wordle by Kelly Wu");
@@ -192,6 +191,7 @@ public class StartGUI extends JFrame {
             
             // ====================== Create End Window ====================== //
             if (rowNum < 6) {
+                currTime = LocalDateTime.now(); // time when user won the game
                 title = "Congratulations!";
                 if ((rowNum + 1) == 1) {
                     detail = "You guessed within " + score + " try.";
@@ -257,7 +257,7 @@ public class StartGUI extends JFrame {
                 String dbPassword = "abc123";
                 try {
                     conn = DriverManager.getConnection(url, dbUser, dbPassword);
-                    String time = currTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); // login time
+                    String time = currTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); // won time
                     String query = "INSERT INTO STATS (time, username, score) VALUES ('" + time + "', '" + username + "', '" + score + "')";
 
                     // Insert user's stats into the database
