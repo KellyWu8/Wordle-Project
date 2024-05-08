@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class StartGUI extends JFrame {
     JFrame startFrame = null;
@@ -14,12 +15,15 @@ public class StartGUI extends JFrame {
     int currRow = 0; // First row
     int numCorrect = 0;
     String targetWord = null;
+    ArrayList<String> words = null;
+
     String username = null;
     LocalDateTime currTime = null;
 
-    StartGUI(String word, String newUsername) {
+    StartGUI(String word, String newUsername, ArrayList<String> newWords) {
         targetWord = word;
         username = newUsername;
+        words = newWords;
         
         // Set up our frame for the window
         startFrame = new JFrame("Wordle by Kelly Wu");
@@ -146,33 +150,47 @@ public class StartGUI extends JFrame {
                 }
                 else if (text.equals("ENTER")) {
                     if (currRow < 6 && currPos == 5) {
+                        // Check if this word is in the words list
+                        String rowWord = "";
                         for (int i = 0; i < 5; i++) {
                             String currLetter = letterBoxesArray[currRow][i].getLetter().toLowerCase();
-                            
-                            if (currLetter.equals(String.valueOf(targetWord.charAt(i)))) {
-                               letterBoxesArray[currRow][i].setColor(3); // Letter in right position
-                               numCorrect++;
-                            }
-                            else if (targetWord.contains(currLetter)) {
-                               letterBoxesArray[currRow][i].setColor(2); // Letter in wrong position
-                            }
-                            else {
-                                letterBoxesArray[currRow][i].setColor(1); // Letter is not in word
-                            }
+                            rowWord += currLetter;
                         }
                         
-                        if (numCorrect == 5) {
-                            new EndGUI(currRow, targetWord);
-                        }
-                        else {
-                            // Reset to new row
-                            currRow++;
-                            currPos = 0;
-                            numCorrect = 0;
+                        boolean found = words.contains(rowWord);        
+                        if (found) {
+                            // Update the color of boxes
+                            for (int i = 0; i < 5; i++) {
+                                String currLetter = letterBoxesArray[currRow][i].getLetter().toLowerCase();
 
-                            if (currRow == 6) {
+                                if (currLetter.equals(String.valueOf(targetWord.charAt(i)))) {
+                                   letterBoxesArray[currRow][i].setColor(3); // Letter in right position
+                                   numCorrect++;
+                                }
+                                else if (targetWord.contains(currLetter)) {
+                                   letterBoxesArray[currRow][i].setColor(2); // Letter in wrong position
+                                }
+                                else {
+                                    letterBoxesArray[currRow][i].setColor(1); // Letter is not in word
+                                }
+                            }
+                            // Determine results
+                            if (numCorrect == 5) {
                                 new EndGUI(currRow, targetWord);
                             }
+                            else {
+                                // Reset to new row
+                                currRow++;
+                                currPos = 0;
+                                numCorrect = 0;
+
+                                if (currRow == 6) {
+                                    new EndGUI(currRow, targetWord);
+                                }
+                            }
+                        }
+                        else {
+                            new ReminderGUI();
                         }
                     }
                 }

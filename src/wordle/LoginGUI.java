@@ -4,19 +4,22 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.util.*;
 
-public class LoginGUI {
+public class LoginGUI extends JFrame {
     private JFrame loginFrame;
-    private JLabel titleLabel;
+    private final JLabel titleLabel;
     private JLabel msgLabel;
     private JTextField usernameField;
     private JTextField passwordField;
     private JButton loginButton;
-    private JButton signUpButton;
+    private final JButton signUpButton;
+    WordList wl = null;
     private String targetWord = null;
+    ArrayList<String> words = null;
     
     LoginGUI() {        
-        loginFrame = new JFrame("Login");
+        loginFrame = new JFrame("Wordle by Kelly Wu");
         loginFrame.setSize(300, 200);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.setResizable(false);
@@ -70,8 +73,10 @@ public class LoginGUI {
                 // ================== Starting Wordle Game ================== //
                 if (authenticate(username, password)) {
                     loginFrame.dispose();
-                    targetWord = new WordList("words.txt").getTargetWord();
-                    new StartGUI(targetWord, username);
+                    wl = new WordList("words.txt"); 
+                    targetWord = wl.getTargetWord();
+                    words = wl.getWords();
+                    new StartGUI(targetWord, username, words);
                 } else {
                     msgLabel.setText("Invalid username or password.");
                 }

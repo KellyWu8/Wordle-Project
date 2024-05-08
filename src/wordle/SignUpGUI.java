@@ -5,18 +5,17 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.sql.*;
 
-public class SignUpGUI {
+public class SignUpGUI extends JFrame {
     private JFrame signUpFrame;
-    private JLabel titleLabel;
+    private final JLabel titleLabel;
     private JLabel msgLabel;
     private JTextField usernameField;
     private JTextField passwordField;
     private JButton loginButton;
-    private JButton signUpButton;
-    private String targetWord = null;
+    private final JButton signUpButton;
     
     SignUpGUI() {
-        signUpFrame = new JFrame("Sign Up");
+        signUpFrame = new JFrame("Wordle by Kelly Wu");
         signUpFrame.setSize(300, 200);
         signUpFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         signUpFrame.setResizable(false);

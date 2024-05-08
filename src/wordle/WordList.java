@@ -33,4 +33,8 @@ public class WordList {
     String getTargetWord() {
         return targetWord;
     }
+    
+    ArrayList<String> getWords() {
+        return words;
+    }
 }
