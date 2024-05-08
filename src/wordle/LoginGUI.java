@@ -14,9 +14,9 @@ public class LoginGUI extends JFrame {
     private JTextField passwordField;
     private JButton loginButton;
     private final JButton signUpButton;
-    WordList wl = null;
+    private WordList wl = null;
     private String targetWord = null;
-    ArrayList<String> words = null;
+    private ArrayList<String> words = null;
     
     LoginGUI() {        
         loginFrame = new JFrame("Wordle by Kelly Wu");

@@ -6,13 +6,13 @@ import java.awt.event.*;
 
 public class ReminderGUI extends JFrame {
     private JFrame reminderFrame;
-    private JLabel titleLabel;
-    private JButton closeButton;
+    private final JLabel titleLabel;
+    private final JButton closeButton;
     
     ReminderGUI() {
         reminderFrame = new JFrame("Wordle by Kelly Wu");
         reminderFrame.setSize(300, 150);
-        reminderFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        reminderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         reminderFrame.setResizable(false);
         reminderFrame.setLocationRelativeTo(null);
         

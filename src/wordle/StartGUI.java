@@ -3,22 +3,17 @@ package wordle;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class StartGUI extends JFrame {
-    JFrame startFrame = null;
-    LetterBox[][] letterBoxesArray = new LetterBox[6][5];
-    int currPos = 0; // First position
-    int currRow = 0; // First row
-    int numCorrect = 0;
-    String targetWord = null;
-    ArrayList<String> words = null;
-
-    String username = null;
-    LocalDateTime currTime = null;
+    private JFrame startFrame = null;
+    private final LetterBox[][] letterBoxesArray = new LetterBox[6][5];
+    private int currPos = 0; // First position
+    private int currRow = 0; // First row
+    private int numCorrect = 0;
+    private String targetWord = null;
+    private ArrayList<String> words = null;
+    private String username = null;
 
     StartGUI(String word, String newUsername, ArrayList<String> newWords) {
         targetWord = word;
@@ -158,7 +153,7 @@ public class StartGUI extends JFrame {
                         }
                         
                         boolean found = words.contains(rowWord);        
-                        if (found) {
+                        if (found) { // word in word list
                             // Update the color of boxes
                             for (int i = 0; i < 5; i++) {
                                 String currLetter = letterBoxesArray[currRow][i].getLetter().toLowerCase();
@@ -176,7 +171,7 @@ public class StartGUI extends JFrame {
                             }
                             // Determine results
                             if (numCorrect == 5) {
-                                new EndGUI(currRow, targetWord);
+                                new EndGUI(currRow, targetWord, username, startFrame);
                             }
                             else {
                                 // Reset to new row
@@ -185,11 +180,11 @@ public class StartGUI extends JFrame {
                                 numCorrect = 0;
 
                                 if (currRow == 6) {
-                                    new EndGUI(currRow, targetWord);
+                                    new EndGUI(currRow, targetWord, username, startFrame);
                                 }
                             }
                         }
-                        else {
+                        else { // word not in word list
                             new ReminderGUI();
                         }
                     }
@@ -197,94 +192,5 @@ public class StartGUI extends JFrame {
             }
         });
         return key;
-    }
-    
-    class EndGUI extends JFrame {
-        JFrame endFrame = null;
-        String title = null;
-        String detail = null;
-
-        EndGUI(int rowNum, String word) {
-            int score = rowNum + 1;
-            
-            // ====================== Create End Window ====================== //
-            if (rowNum < 6) {
-                currTime = LocalDateTime.now(); // time when user won the game
-                title = "Congratulations!";
-                if ((rowNum + 1) == 1) {
-                    detail = "You guessed within " + score + " try.";
-                    
-                }
-                else {
-                    detail = "You guessed within " + score + " tries!";
-                }
-            } else {
-                title = "Out of Tries!";
-                detail = "The word was " + word;
-            }
-
-            // Set up the frame
-            endFrame = new JFrame("Wordle by Kelly Wu");
-            endFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            endFrame.setSize(300, 200);
-            endFrame.setResizable(false);
-            endFrame.setLocationRelativeTo(null);
-
-            // Create panel
-            JPanel background = new JPanel();
-            background.setLayout(new GridLayout(3, 1));
-
-            // Create title label
-            JLabel titleLabel = new JLabel(title, JLabel.CENTER);
-            titleLabel.setFont(new Font("Times New Roman", Font.BOLD, 24));
-            titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-            // Create detail label
-            JLabel detailLabel = new JLabel(detail, JLabel.CENTER);
-            detailLabel.setFont(new Font("Times New Roman", Font.PLAIN, 18));
-            detailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-            // Create Play Again button
-            JButton paButton = new JButton("Play Again");
-            paButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            paButton.setBackground(Color.BLACK);
-            paButton.setForeground(Color.WHITE);
-            paButton.setFont(new Font("Arial", Font.BOLD, 16));
-            paButton.setPreferredSize(new Dimension(120, 40));
-            paButton.setMargin(new Insets(10, 20, 10, 20));
-            
-            paButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    endFrame.dispose();
-                    startFrame.dispose();
-                    new Wordle();
-                }
-            });
-
-            background.add(titleLabel);
-            background.add(detailLabel);
-            background.add(paButton);
-
-            endFrame.add(background);
-            endFrame.setVisible(true);
-            // ====================== Log User's Stats ====================== //
-            if (rowNum < 6) {
-                Connection conn = null;
-                String url = "jdbc:mariadb://127.0.0.1/cs3913";
-                String dbUser = "cs3913";
-                String dbPassword = "abc123";
-                try {
-                    conn = DriverManager.getConnection(url, dbUser, dbPassword);
-                    String time = currTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")); // won time
-                    String query = "INSERT INTO STATS (time, username, score) VALUES ('" + time + "', '" + username + "', '" + score + "')";
-
-                    // Insert user's stats into the database
-                    Statement s = conn.createStatement();
-                    s.execute(query);
-                } catch (SQLException ex) {
-                    System.out.println("Exception: " + ex.toString());
-                }
-            }
-        }
     }
 }
