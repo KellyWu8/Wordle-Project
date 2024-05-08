@@ -5,7 +5,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class LetterBox extends JPanel {
-    private JLabel letterBoxLabel;
+    private final JLabel letterBoxLabel;
     private int colorVal = 0;
 
     LetterBox() {
@@ -45,6 +45,9 @@ public class LetterBox extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        
         if (colorVal != 0) {
             Color color = null;
             if (colorVal == 1) { // Gray: letter not in word
