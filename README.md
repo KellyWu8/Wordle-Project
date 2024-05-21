@@ -31,8 +31,8 @@ javac -d bin src/wordle/*.java && java -cp bin:lib/* wordle.Wordle
 ```
 
 ## Demo Screenshots
-![hi](img/login-signup.PNG)
-!(img/wordle1.png)
-!(img/wordle2.png)
-!(img/wordle3.png)
-!(img/wordle4.png)
+![login and sign up gui](img/login-signup.PNG)
+![default wordle gui](img/wordle1.png)
+![word not in list guiI](img/wordle2.png)
+![user won game](img/wordle3.png)
+![user ran out of tries](img/wordle4.png)
