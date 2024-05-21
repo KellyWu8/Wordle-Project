@@ -31,7 +31,7 @@ javac -d bin src/wordle/*.java && java -cp bin:lib/* wordle.Wordle
 ```
 
 ## Demo Screenshots
-!(img/login-signup.png)
+![hi](img/login-signup.png)
 !(img/wordle1.png)
 !(img/wordle2.png)
 !(img/wordle3.png)
